@@ -1,0 +1,105 @@
+Steps in insatlling ArchLinux
+1) Check for internet Connections
+	- ping 8.8.8.8 (ping google)
+2) Check to see if we are in the UEFI boot mode
+	- ls /sys/firmware/efi/efivars (if there is a responce means zis directory exists)
+3) List available disks
+	- lsblk (brief)
+	- fdisk -l (a bit detailed)
+4) Partition the disk
+	- cgdisk /dev/sda (Enter partitioning screen)
+	- use the wizard to partition
+		* Select free space and select new option
+		* make a boot partition (600 M, ef00)
+		* make swap partition (4G,8200)
+		* make system partition (size, 8300)
+		* make home partition (size,8300)
+	- write the created partition
+5) Format the efi partition
+	- mkfs.fat -F32 /dev/sdaX (X is the number of the efi partition)
+6) Initialized swap partition
+	- mkswap /dev/sdaX (X is the number of the swap partition)
+	- sawpon /dev/sdaX (X is the number of the swap partition)
+7) Format the system and home directories
+	- mkfs.ext4 /dev/sdaX (assign X corresponding to the partitions)
+8) Mount the boot and system partitions
+	- mount /dev/sdaX /mnt (mount the system partition)
+	- mkdir /mnt/boot (make boot directory)
+	- mount /dev/sdaX /mnt/boot (mount boot partition)
+	- mkdir /mnt/home (make home directory)
+	- mount /dev/sdaX /mnt/home (mount home partition)
+9) Install core and basic packges
+	- pacstrap /mnt base base-devel
+10) generate and save a file system table (fstab)
+	- genfstab -U /mnt >> /mnt/etc/fstab
+11 Change root into the new system
+	- arch-chroot /mnt
+12) Set the time zone
+	- ln -sf /usr/share/zoneinfo/Africa/Addis_Ababa /etc/localtime
+13) St the system to the hardware clock
+	- hwclock --systohc
+14) Setting local (localization)
+	- open locale.gen file	
+		* nano /etc/locale.gen
+	- uncomment "en_US.UTF-8 UTF-8" and save
+	- run locale-gen
+		* locale-gen	
+	- create file "locale.conf" and set LANG variable
+		* echo "LANG=en_US_UTF-8" >/etc/locale.conf
+15) create host name
+	- nano /etc/hostname
+	- on the 1st line write the hostname => JOY
+16) set passsword for root
+	- passwd
+	- type password
+17) create a user account and give password
+	- useradd  -g users -G wheel,storage,power -m joy
+	- passwd joy
+18) install grub and efibootmgr
+	- pacman -S grub efibootmgr
+19) install GRUB EFI application
+	- grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+20) generate a grub configuration file
+	- install os-prober (to see other OSs)
+		* pacman -S os-prober
+	- create the grub config
+		* grub-mkconfig -o /boot/grub/grub.cfg
+21) reboot
+22) enable dhcp
+	- systemctl enable dhcpcd@enp1s0 (enp1s0 is the place where the network interface goes)
+	- systemctl start dhcpcd@enpls0  (enp1s0 is the place where the network interface goes)
+23) install openssh
+	- pacman -S openssh
+24) edit the sudo file
+	- visudo
+	- go down and find wheel group in suders section and uncomment it
+	- press ":" and then type "wq" and press enter
+25) enable and restart the sshd process
+	- systemctl restart sshd
+	- systemctl enable sshd
+26) (Additional) to ssh into another system
+	- ssh user_name@ip_address
+27) (Additional) to check internet connection
+	- ip address show (how ip address)
+	- ping -c 5 8.8.8.8 (ping google)
+28) enabling wireless network (check)
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

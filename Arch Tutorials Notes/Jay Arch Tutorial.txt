@@ -1,0 +1,720 @@
+
+
+                                                      Jay Arch Linux Tutorial
+                                                             (Video)
+         _______________________________________________________________________________________________________________           
+         _______________________________________________________________________________________________________________
+
+               Contents:
+                  1) Getting Started with Arch Linux
+                  2) Arch Linux Full Installation Walkthrogh
+                  3) Arch Linux Full Installation Walkthrogh (on LVM)
+                  4) Arch Linux Full Installation Walkthrogh (on LVM with Encryption)
+                  5) Getting Started with Arch Linux 02 - Starting the Installation
+                  6) Getting Started with Arch Linux 03 - Finishing the Installation
+                  7) Getting Started with Arch Linux 04 - installing Desktop Enviroments
+                  8) Getting Started with Arch Linux 05 - The sudo command
+                  9) Getting Started with Arch Linux 06 - Managing Packages with pacman
+                  10) Getting Started with Arch Linux 07 - The Arch User Repository
+                  11) Getting Started with Arch Linux 08 - Process Management
+                  12) Getting Started with Arch Linux 09 - Basic Security
+                  13) Managing LVM Snapshots on Arch Linux
+                  14) Showing off my Custom Arch Linux Openbox Build
+
+         _______________________________________________________________________________________________________________
+         _______________________________________________________________________________________________________________         
+
+1) Getting Started with Arch Linux
+2) Arch Linux Full Installation Walkthrogh
+   - use Echer to make a bootable device (check it out)
+   - check internet access
+      $ ip addr show    (display ip address for connected network)
+      $ to use wifi use the following commands
+         # wifi-menu    (scan available wifi)
+            * select wifi, enter profile name and password
+      $ if struggling with getting ip address even after getting connected to network, run the following
+         # dhcpcd       (starts dhcp on local machine)
+      $ ping google to see if there is internet connection
+         # ping -c 5 8.8.8.8
+            * the -c means the count or number of times you want to ping, thus followed by a number
+            * the 8.8.8.8 stands for the google ip add (I think), you may use another working public ip address or even a website
+            * alternatively we could type ping 8.8.8.8
+               % but this will ping infinite number of times in Linux (meaning the ping will not stop, the user has to stop it manually)
+   - learn linux command
+      $ Ctrl + L        (clear terminal screen)
+   - to refresh the mirror list (or see the download speed) run the following command
+      $ pacman -Syyy
+   - check status of hard disk
+      $ fdisk -l
+      $ fdisk -l | more    (allow to view one page at a time)
+      $ lsblk              (display brief and condensed info about connected hard disks)
+   - select and partition hard disk
+      $ fdisk /dev/<disk_id>
+         # p                        (print info abt the current selected disk)
+         # g                        (create a new GPT partition lable)
+         # n                        (create a new partition for EFI which is part of the boot process)
+            * select default partition number = 1
+            * select default first sector
+            * last sector = +500M
+            * if requested to remove signiture for existing partition choose yes
+         # t                        (set type for partition)
+            * by default it will select partition 1 cuz its the only partition
+            * if wanted to get a list for partition type numbers type <L>
+               % type <q> to return to the upper fdisk command line (meaning go out from list display and go to fdisk command interface)
+            * partition type = 1
+         # n                        (create a new partition for root)
+            * partition number = default = 2
+            * first sector = default
+            * last sector = +30G       (adjust according to need) 
+            * if requested to remove signiture for existing partition choose yes
+         # n                        (create a new partition for home)
+            * partition number = default = 3
+            * first sector = default
+            * last sector = default    (take the remaining disk space)
+         # the type for the latter two partition need not to be set as default value of ext4 is what is wanted
+         # p                        (to view the parition table for checking)
+         # w                        (to write gpt partition table to disk)
+   - lsblk                       (to view new partition layout for disk)
+   - format partitions
+      $ mkfs.fat -F32 /dev/<partition_1(EFI)>
+      $ mkfs.ext4 /dev/<partition_2(root)>
+      $ mkfs.ext4 /dev/<partition_3(home)>
+   - mount partitions
+      $ mount root
+         # mount /dev/<partition_2(root)> /mnt
+      $ mount home
+         # mkdir /mnt/home          (make directory for home)
+         # mount /dev/<partition_3(home)> /mnt/home
+      $ see mount status by using following command
+         # mount                    (info about mount and at the end is mounted partitions)
+         # df -h                    (show mounted partitions)
+   - generate fstab
+      $ mkdir /mnt/etc              (make an etc directory, this is where fstab file goes)
+      $ genfstab -U -p /mnt >> /mnt/etc/fstab
+      $ cat /mnt/etc/fstab          (display content of fstab file)
+   - pacstrap -i /mnt base          (install base arch packages into /mnt)
+   - arch-chroot /mnt               (access arch Installation)
+   - install packages
+      $ install linux kernel(s)
+         # pacman -S linux-lts linux-lts-headers linux linux-headers         (install two kernels linux and linux-lts, advantagous incase of failurs)
+         # if both kernels are installed, the default will be linux-lts kernel by default, but this can be changed manually
+         # you still have a choice to install only one (its better if you stick to the linux kernel for the time being)
+      $ install other packages (only names are listed not command, so append pacman -S)
+         # nano                     (text editor)
+         # openssh                  (used to remotly manage device, optional)
+            * systemctl enable sshd                (start ssh service on system start)
+         # base-devel               (additional packages that are important)
+         # networkmanager          (needed for connection and network)
+            * systemctl enable NetworkManager      (start network manager at system start)
+         # tools for wireless or wifi
+            * wpa_supplicant
+            * wireless_tools
+            * netcl
+         # dialog
+   - initiate ram disk for linux kernel
+      $ mkinitcpio -p linux-lts
+      $ mkinitcpio -p linux
+   - configure local setting
+      $ nano /etc/locale.gen
+         # uncomment the desired locale in the file locale.gen
+      $ locale-gen                   (generate locale)
+   - manage accounts on system
+      $ passwd                       (set password for root user)
+      $ create a user account
+         # useradd -m -g users -G wheel <username>
+         # passwd <username>
+   - check or install sudo and configure it for user use
+      $ which sudo                  (to check path for sudo)
+      $ pacman -S sudo              (to install sudo if isn't already)
+      $ EDITOR=nano visudo          (to add sudo privilage to wheel group)
+         # uncomment line where wheel group gets sudo privilage
+   - configure grub
+      $ pacman -S grub efibootmgr dosfstools os-prober mtools              (install grub and packages related to it)
+      $ mkdir /boot/EFI             (make directory for EFI)
+      $ mount /dev/<partition_1(EFI)> /boot/EFI                            (mount EFI partition_1)
+      $ grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck     (install grub)
+      $ mkdir /boot/grub/locale
+      $ cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo   (might need modification based on locale setting)
+      $ grub-mkconfig -o /boot/grub/grub.cfg             (generate grub bootloader configuration)
+   - create a swap file (optional, but my personal preference is to use a separate partition for swap)
+      $ fallocate -l 2G /swapfile
+      $ chmod 600 /swapfile                           (change permission to swap file)
+      $ mkswap /swapfile                              (make into swap file)
+      $ cp /etc/fstap /etc/fstab.bak                  (make a back up copy of fstab)
+      $ echo '/swapfile none swap sw 0 0' | tee -a /etc/fstab
+      $ cat /etc/fstab                                (display fstab to check content)
+      $ tha advantage of using this file based swap is the freedom to modify the size whenever we want to 
+   - additional packages to install (name of package only shown)
+      $ intel-ucode                    (package for cpu micro code)
+         # if the system cpu is amd, then replace <intel> with <amd> in the above command
+      $ xorg-server                    (needed for desktop enviroment)
+      $ mesa                           (driver for video card - installed along side xorg cuz of dependency; this is a package for intel or amd GPU)
+      $ nvidia nvidia-lts nvidia-utils    (only do this if there is an Nividia GPU) (optional)
+         # install nvidia package for linux kernel
+         # install nvidia-lts for linux kernel
+         # nvidia-utils is install both for linux and linux-lts kernels
+      $ if the Arch intall is inside a virtual box, then install the following packages (optional)
+         # virtualbox-guest-utils
+         # xf86-video-vmware
+   - prepare to finalize installation setup
+      $ exit
+      $ umount -a
+      $ poweroff or reboot
+
+         _______________________________________________________________________________________________________________
+         _______________________________________________________________________________________________________________
+
+3) Arch Linux Full Installation Walkthrogh (on LVM)
+   - check internet access
+      $ use the same steps used in Video 2 for this stage
+   - to refresh the mirror list (or see the download speed) run the following command
+      $ use the same steps used in Video 2 for this stage
+   - check status of hard disk
+      $ use the same steps used in Video 2 for this stage
+   - select and partition hard disk
+      $ fdisk /dev/<disk_id>
+         # p                        (print info abt the current selected disk)
+         # g                        (create a new GPT partition lable)
+         # n                        (create a new partition for EFI which is part of the boot process)
+            * select default partition number = 1
+            * select default first sector
+            * last sector = +500M
+            * if requested to remove signiture for existing partition choose yes
+         # t                        (set type for partition for EFI partition)
+            * by default it will select partition 1 cuz its the only partition
+            * if wanted to get a list for partition type numbers type <L>
+               % type <q> to return to the upper fdisk command line (meaning go out from list display and go to fdisk command interface)
+            * partition type = 1
+         # n                        (create a new partition for lvm)
+            * partition number = default = 2
+            * first sector = default
+            * last sector = default    (take the remaining disk space)
+         # t                        (set the type for lvm partition)
+            * by default it will present partition 2, press enter cuz that's the desired partition
+            * if wanted to get a list for partition type numbers type L
+            * enter partition type = 30      (which is the type number for the Linux LVM)
+         # p                        (to view the parition table for checking)
+         # w                        (to write gpt partition table to disk)
+   - lsblk                       (to view new partition layout for disk)
+   - format the EFI partition
+      $ mkfs.fat -F32 /dev/<partition_1(EFI)>
+   - set up LVM
+      $ pvcreate --dataalignment 1m /dev/<partition_2_LVM>        (create physical volume)
+      $ vgcreate <volume_group_name> /dev/<partition_2_LVM>       (create volume group, <volume_group_name> => volgroup0)
+      $ create logical volumes for root and home (these are actually where data gets stored)
+         # lvcreate -L <size> <volume_group_name> -n <logical_volume_name>
+            * this is a logical volume for root (system) volume
+            * -L is used to specify size for volume, hence followed by size
+            * <size> => 30GB  (or the size of your choosing for root)
+            * <volume_group_name> => volgroup0 (or the name that you gave for the volume group you created earlier)
+            * -n is used to specify the name for the logical volume, thus followed by a name for the LV
+            * <logical_volume_name> => lv_root (again you are free to give any name)
+         # lvcreate -l 100%FREE <volume_group_name> -n <logical_volume_name>
+            * this is the logical volume for home
+            * the <-l 100%FREE> allocates all the remaining space on the LVM to this volume
+            * <volume_group_name> => volgroup0
+            * <logical_volume_name> => lv_home
+            * Alternatively you can allocate logical volume for home with specific size
+               % lvcreate -L <size> <volume_group_name> -n <logical_volume_name>
+                  ~ <size> => size of your choosing for home
+                  ~ <volume_group_name> => volgroup0
+                  ~ <logical_volume_name> => lv_home
+                % allocating specific size for home and leaving some free space unallocated on an LVM has the advantages
+                  ~ the unallocated space can be used to store Snapshots
+                  ~ Snapshots are great in Arch Linux
+                  ~ by using Snapshots we can create restore points for our Arch Linux system
+                  ~ for instance you can take a Snapshot before installing system update, and if anything goes wrong after the update (like a bug or incompatibility) you can revert back to an earlier stable system state using Snapshot
+                  ? check out on how to use Snapshot even when not being on an LVM based Arch install
+               % while on the topic the general advantage of using LVM is that you can grow your file system online without a reboot
+      $ mdprobe dm_mod                          (refresh LVM)
+      $ vgscan                                  (rescan the LVM to make sure everything is detected by the kernel)
+      $ vgchange -ay                            (activate the created volume group and logical volumes)
+      $ format logical volumes
+         # mkfs.ext4 /dev/<volume_group_name>/<root_logical_volume_name>         (format root logical volume)
+            * <volume_group_name> => volgroup0
+            * <root_logical_volume_name> => lv_root
+         # mkfs.ext4 /dev/<volume_group_name>/<home_logical_volume_name>         (format home logical volume)
+            * <volume_group_name> => volgroup0
+            * <root_logical_volume_name> => lv_home
+   - mount logical volumes
+      $ mount /dev/volgroup0/lv_root /mnt          (mount root to /mnt directory)
+      $ mkdir /mnt/home                            (create a directory for home inside /mnt)
+      $ mount /dev/volgroup0/lv_home /mnt/home     (mount home to /mnt/home directory)
+   - save the mount points to fstab file
+      $ mkdir /mnt/etc                             (create an etc directory, this is where fstab file is to be saved)
+      $ genfstab -U -p /mnt >> /mnt/etc/fstab      (generate fstab and save it to /mnt/etc directory)
+      $ cat /mnt/etc/fstab                         (display content of fstab file)
+   - pacstrap -i /mnt base          (install base arch packages into /mnt)
+   - arch-chroot /mnt               (access arch Installation)
+   - install packages (with additional steps to Video 2 similar stage)
+      $ follow all the steps used in the 2nd Video for this stage and then follow the following steps
+      $ install required package (append pacman -S infornt)
+         # lvm2                                    (this is required as we have set up LVM system)
+         # to get lvm support at boot time add the above package to the mkinitcpio.conf file in /etc directory
+            * nano /etc/mkinitcpio.conf            (open the mkinitcpio.conf file in nano for editting)
+            * go to the line where it says HOOKS and edit as follows
+               % move the insertion point (cursor) between block filesystems2 (on the same line as specified above)
+               % add <lvm2> with a space bfore and after it
+               % save and exit
+   - initiate ram disk for linux kernel
+      $ use the same steps used in Video 2 for this stage
+   - configure local setting
+      $ use the same steps used in Video 2 for this stage
+   - manage accounts on system
+      $ use the same steps used in Video 2 for this stage
+   - check or install sudo and configure it for user use
+      $ use the same steps used in Video 2 for this stage
+   - configure grub
+      $ use the same steps used in Video 2 for this stage
+   - create a swap file (optional, but my personal preference is to use a separate partition for swap)
+      $ use the same steps used in Video 2 for this stage
+   - additional packages to install
+      $ use the same steps used in Video 2 for this stage
+   - prepare to finalize installation setup
+      $ use the same steps used in Video 2 for this stage
+
+         _______________________________________________________________________________________________________________
+         _______________________________________________________________________________________________________________   
+
+4) Arch Linux Full Installation Walkthrogh (on LVM with Encryption)
+   - use the following command to increase the font on the screen while installing Arch Linux
+      $ setfont latarcyrheb-sun32.psfu.gz
+   - check internet access
+      $ use the same steps used in Video 2 (Standard) for this stage
+   - to refresh the mirror list (or see the download speed) run the following command
+      $ use the same steps used in Video 2 (Standard) for this stage
+   - check status of hard disk
+      $ use the same steps used in Video 2 (Standard) for this stage
+   - select and partition hard disk
+      $ fdisk /dev/<disk_id>
+         # p                        (print info abt the current selected disk)
+         # g                        (create a new GPT partition lable)
+         # n                        (create a new partition for EFI which is part of the boot process)
+            * select default partition number = 1
+            * select default first sector
+            * last sector = +500M
+            * if requested to remove signiture for existing partition choose yes
+         # t                        (set type for partition for EFI partition)
+            * by default it will select partition 1 cuz its the only partition
+            * if wanted to get a list for partition type numbers type <L>
+               % type <q> to return to the upper fdisk command line (meaning go out from list display and go to fdisk command interface)
+            * partition type = 1
+         # n                        (create a new partition for boot)
+            * select default partition number = 2
+            * select default first sector
+            * last sector = +500M
+         # n                        (create a new partition for lvm)
+            * partition number = default = 3
+            * first sector = default
+            * last sector = default    (take the remaining disk space)
+         # t                        (set the type for lvm partition)
+            * by default it will present partition 3, press enter cuz that's the desired partition
+            * if wanted to get a list for partition type numbers type <L>
+            * enter partition type = 30      (which is the type number for the Linux LVM)
+         # p                        (to view the parition table for checking)
+         # w                        (to write gpt partition table to disk)
+   - lsblk                       (to view new partition layout for disk)
+   - format the EFI partition
+      $ follow similar steps used in Video 3 (LVM) for this stage
+   - format boot partition
+      $ mkfs.ext4 /dev/<partition_2(Boot)>
+   - set up encryption
+      $ cryptsetup luksFormat /dev/<partition_3(LVM)>
+         # confirm that you will overwrite that partition (any data will be overwritten irrevocably)
+         # enter passphrase and verify(confirm) it
+      $ cryptsetup open --type luks /dev/<partition_3(LVM)> <name>
+         # this will open the encrypted device so that we can work on it
+         # <name> is a name for the encrypted device that we can refer to, <name> => lvm
+         # type in the passphrase you gave earlier when asked for it
+   - set up LVM
+      $ pvcreate --dataalignment 1m /dev/mapper/<encrypted_device_name>             (create physical volume)
+         # <encrypted_device_name> => lvm
+      $ vgcreate <volume_group_name> /dev/mapper/<encrypted_device_name>            (create volume group)
+         # <volume_group_name> => volgroup0
+         # <encrypted_device_name> => lvm
+      $ create logical volumes for root and home (these are actually where data gets stored)
+         # follow similar steps used in Video 3 (LVM) for this sub-stage
+      $ format logical volumes
+         # follow similar steps used in Video 3 (LVM) for this sub-stage
+   - mount logical volumes
+      $ follow similar steps used in Video 3 (LVM) for this stage      
+   - mount boot partition
+      $ mkdir /mnt/boot                                        (create a directory for boot partition)
+      $ mount /dev/<partition_2(Boot) /mnt/boot                (mount boot partition)
+   - save the mount points to fstab file
+      $ follow similar steps used in Video 3 (LVM) for this stage      
+   - pacstrap -i /mnt base          (install base arch packages into /mnt)
+   - arch-chroot /mnt               (access arch Installation)
+   - install packages (with additional steps to Video 3 similar stage)
+      $ follow similar steps used in Video 3 (LVM) for this stage (with a single additional step, refer below)      
+      $ add the word <encrypt> along with <lvm2> when editting /etc/mkinitcpio.conf file's HOOKS section
+   - initiate ram disk for linux kernel
+      $ use the same steps used in Video 2 for this stage
+   - configure local setting
+      $ use the same steps used in Video 2 for this stage
+   - manage accounts on system
+      $ use the same steps used in Video 2 for this stage
+   - check or install sudo and configure it for user use
+      $ use the same steps used in Video 2 for this stage
+   - configure grub (with additional steps to Video 2 similar stage)
+      $ use the same steps used in Video 2 for this stage (with a single additional step, refer below)
+      $ after installing grub and related packages, edit the grub file found in /etc/default
+         # nano /etc/default/grub
+         # uncomment the line which enables CRYPTODISK
+         # add an additional option to GRUB_CMDLINE_LINUX_DEFAULT attribute
+            * between <loglevel> and <quiet> options add the following with a space before and after it
+               % cryptdevice=/dev/<partition_3_id>:<volume_group_name>:allow-discards
+                  ~ <partition_3_id> => /dev/sda3 (this is an example, the id might differ)
+                  ~ <volume_group_name> => volgroup0
+   - create a swap file (optional, but my personal preference is to use a separate partition for swap)
+      $ use the same steps used in Video 2 for this stage
+   - additional packages to install
+      $ use the same steps used in Video 2 for this stage
+   - prepare to finalize installation setup
+      $ use the same steps used in Video 2 for this stage
+
+         _______________________________________________________________________________________________________________
+         _______________________________________________________________________________________________________________
+
+5) Getting Started with Arch Linux 02 - Starting the Installation
+   - Steps mentioned in this video are alredy part of Video 2
+   - check internet access (Refer Video 2 for this stage)   
+   - in this step Jay(the guy giving the tutorial) actually used ssh to perform the Arch installation
+      $ I belive first he installed and ran openssh on the device to install arch Linux on (meaning from the live USB terminal)
+      $ then on the other device he ran the shh command with the ip of the device to install Arch Linux on
+         # ssh root@<device_ip_addr>
+            * now I am not sure whether the <root> is required or that it can be the user account name (? check it out)
+            * but the <device_ip_addr> => is the ip of the device to install Arch on
+         # when requested enter password and you are in to the other device
+   - check status of hard disk (Refer Video 2 for this stage)
+   - select and partition hard disk (Refer Video 2 for this stage)
+   - format partitions (Refer Video 2 for this stage)
+   - mount partitions (Refer Video 2 for this stage, one informative command added below)
+      $ follow all steps in Video 2 for this stage and then maybe use the following command to check on mount points
+      $ to check if partitions are mounted run the following command
+         # mount |grep <hard_disk_id>
+            * <hard_disk_id> => sda (the hard disk id can differ on different devices)
+   - install base Arch Linux
+      $ pacstrap -i /mnt base
+
+         _______________________________________________________________________________________________________________
+         _______________________________________________________________________________________________________________
+
+6) Getting Started with Arch Linux 03 - Finishing the Installation
+   - Steps mentioned in this video are alredy part of Video 2    
+   - generate fstab (Refer Video 2 for this stage)
+   - arch-chroot /mnt               (access arch Installation)
+   - install packages (Refer Video 2 for this stage, some additional packages listed below)
+      $ follow all steps in Video 2 for this stage and then install the following packages
+      $ grub                        (boot manager)    
+      $ efibootmgr                  
+      $ dosfstools                  (needed to read fat filesystems, hence needed to read EFI partition)
+      $ os-prober
+      $ mtools
+      $ network-manager-applet
+   - configure local setting (Refer Video 2 for this stage)
+   - configure grub (Refer Video 2 for this stage)
+   - create a swap file (Refer Video 2 for this stage)
+   - prepare to finalize installation setup (Refer Video 2 for this stage)
+
+         _______________________________________________________________________________________________________________      
+         _______________________________________________________________________________________________________________
+
+7) Getting Started with Arch Linux 04 - installing Desktop Enviroments
+   - check internet access (Refer Video 2 for this stage, there is an additional step below)
+      $ follow any of steps in Video 2 for this stage and you may also refer below for additional methods of checking internet connection
+      $ working with NetworkManager
+         # systemctl status NetworkManager                  (see the current status of NetworkManager, active or not running)
+         # systemctl start NetworkManager                   (start the service of NetworkManager)
+         # systemctl stop NetworkManager                    (stop the service of NetworkManager)
+         # systemctl enable NetworkManager                  (eable or start the service of NetworkManager at system startup)
+   - make sure repository indexes are current
+      $ pacman -Syyy
+   - check what kind of Video card is on the system (command below)
+      $ lspci
+   - install packages (package name only displayed, not full install command)
+      $ xorg-server                                   (an important package related to GUI)
+      $ pacakges needed for intel GPU
+         # xf86-video-intel
+         # libgl
+         # mesa
+      $ pacakges needed for Nvidia GPU
+         # nvidia                                     (this is if you installed linux kernel)
+         # nvidia-lts                                 (this is if you installed linux-lts kernel)
+         # nvidia-libgl
+         # mesa
+      $ packages for ati or amd (not sure for which one so check this, but you most likely will have an intel card)
+         # mesa
+         # xf86-video-amdgpu
+      $ packages if the Arch Install is in virtualbox
+         # virtualbox-guest-utils
+         # virtualbox-guest-modules-arch
+         # mesa
+         # mesa-libgl
+   - create a user
+      $ useradd -m -g users -G wheel <username>
+         # -m switch means we want to add home directory for this user
+         # -g switch allows to set the initial(primary) group for the user 
+         # -G switch allows to set supplemental(additional) groups for the user
+      $ passwd <username>                             (set password for a user) 
+      $ ls -l /home                                   (list storage in home, one directory for each user)
+   - install desktop manager, which controls logging into a GUI enviroment (you can only run and use one desktop manager at a time)
+      $ install gdm desktop manager if gnome is your desktop enviroment (recommendation)
+         # note that gdm can be used with multiple kinds of desktop enviroments
+         # pacman -S gdm                              (install gdm)
+         # systemctl enable gdm                       (enable gdm so that its starts at system startup)
+      $ install sddm desktop manager if kde-plasma is your desktop enviroment (recommendation)
+         # pacman -S sddm                             (install sddm)
+         # systemctl enable sddm                      (enable sddm so that its starts at system startup)
+   - install desktop enviroment (you may install one or more desktop enviroments depending on your desire)
+      $ install gnome desktop enviroment and other packages (name only listed, append pacman -S for user)
+         # gnome                                      (desktop enviroment package)
+         # gnome-terminal
+         # nautilus                                   (default file manager for gnome)
+         # gnome-tweaks                               (customize gnome enviroment)
+         # gnome-control-center                       (main settings hub for gnome)
+         # firefox                                    (optional)
+         # gnome-backgrounds                          (walpapers for desktop background, optional)
+         # adwaita-icon-theme                         (default icon theme for gnome, optional)
+         # arc-gtk-theme                              (additional theme for gnome, optional)
+      $ install xfce4 desktop enviroment along with other needed packages
+         # xfce4
+         # xfce4-goodies
+         # xfce4-terminal
+      $ instal kde-plasma desktop enviroment(DE) and other related packages
+         # plasma                                     (install the kde-plasma desktop enviroment)
+         # konsole                                    (recommended termial for plasma DE)
+         # dolphin                                    (recommended file manager for plasma DE)
+   - check that important services are enabled on system startup
+      $ systemctl enable NetworkManager
+      $ systemctl enable gdm
+
+         _______________________________________________________________________________________________________________
+         _______________________________________________________________________________________________________________
+
+8) Getting Started with Arch Linux 05 - The sudo command
+   - sudo pacman -Syyy                                   (update pacakge index)
+   - to login as root from a normal user terminal use the following command
+      $ su                                               (when prompted to enter password, enter the root password)
+   - add the sudo privilage to a normal user by editting the <visudo> or (</etc/sudoers.tmp> file, but better that you use visudo command to edit this file)
+      $ EDITOR=nano visudo                               (this must be run with root privilages)
+   - <ls> stands for list storage
+   - to test sudo command with out risking anything on your system, just list your directories using sudo privilages
+      $ sudo ls
+   - to add an already created user to the wheel group use the following commands
+      $ usermod -aG wheel <user>                         (this command must be run as root)
+
+         _______________________________________________________________________________________________________________
+         _______________________________________________________________________________________________________________
+
+9) Getting Started with Arch Linux 06 - Managing Packages with pacman
+   - man pacman                                          (read the manual for pacman)
+   - pacman -S <package_name>                            (to install a package, needs root privilage <NRP>)
+   - pacman -Ss <package_name>                           (to search whether a package is available in the Arch repository)
+   - pacman -R <package_name>                            (to remove or uninstall a pacakge from the system, needs root privilage <NRP>)
+      $ the above command only removes the package, but leaves its dependencies on the system, to remove a package along with its dependencies that are not used by any other packag, use the following command
+         # pacman -Rs <package_name>                     (<NRP>)
+   - update your packages atleast every 2 weeks (certainly shouldn't go more than 3 weeks without updating), updating everyweek sounds good
+      $ since Arch Linux is a rolling distribution, updating is crucial
+   - pacman -Syu                                         (to update system and pacakges, <NRP>)
+   - cat /etc/pacman.d/mirrorlist                        (to view list of mirrorlist servers for repositories)
+   - truncate -S 0 <file_name>                           (to truncate or remove the contents of a file)
+   - every now and then update your mirrorlist file for better download speed
+      $ got to /etc/pacman.d directory and run the following commnads
+         # cp mirrorlist mirrorlist.bak                  (make a copy or backup of mirrorlist file, <NRP> since we are in system directory)
+         # truncate -s 0 mirrorlist                      (remove the contents of the mirrorlist file, <NRP>)
+         # nano mirrorlist                               (edit the mirrorlist file, <NRP>)   
+            * go to the Arch Linux mirrorlist generator, select your country or the one near you and copy the list of mirrorlist servers
+         # pacman -Syyy                                  (update or redownload the index)
+
+         _______________________________________________________________________________________________________________
+         _______________________________________________________________________________________________________________
+
+10) Getting Started with Arch Linux 07 - The Arch User Repository
+   - AUR : Arch User Repository
+   - go to the <archlinux.org> webpage, then into the AUR section, search and choose your pacakge
+   - To install a package from AUR follow the following steps
+      $ from the pacakge detail AUR page, download the Snapshot
+      $ navigate to where the snapshot was downloaded and initialize the terminal
+      $ since the snapshot is a compressed file, extract it
+         # tar -xvf <compressed_file_name>
+      $ change directory to the newly extracted one
+         # cd <package_name>
+      $ cat PKGBUILD                                  (examine the contents of the PKGBUILD file if you can, better to see what code is in the script you are running)
+      $ makepkg -s                                    (generate a package out of the PKGBUILD file, the -s flag takes care of dependencies)
+      $ pacman -U <package_tar.xz_file>               (install the generated or downloaded pacakge, <NRP>)
+      $ rm -rf <file_name>                            (to remove files and directories, use the <*> wild card to target multiple instances with similar pattern)
+   - Using helper to install packages from AUR
+      $ install yay(Yet Another Yoghurt) using the install method mentioned above (the step to installing package from AUR, ironic I know)
+         # but instead of downloading the snapshot, clone the file from git
+         # but first check if you have git installed, if not install it
+            * which git                               (prints the location of the binary for the package, thus checking if it is installed or not in the process)
+            * git --version                           (prints the version of git you have, if you don't have it installed this shows an error message)
+         # pacman -S git                              (installs git package, <NRP>) 
+         # git clone https://aur.archlinux.org/yay.git      (clones and downloads the package install files, check the website as it might update)
+         # from this point on refer the above step to installing a pacakge by generating it from the <PKBUILD> file         
+      $ to install using yay use the following command
+         # yay <pacakge_name>
+            * what the above command will do is search for that pacakge in the AUR, present the result and wait for you to choose which of the result you want to install
+            * so searching and installing are compiled in a single command or step
+            * check out more tutorials on <yay> or other helper functions if you are interested
+
+         _______________________________________________________________________________________________________________
+         _______________________________________________________________________________________________________________
+
+11) Getting Started with Arch Linux 08 - Process Management
+   - to manage a process or service use the <systemctl> command, the following commands are self explanatory
+      $ systemctl status <service>
+         * usually the <status> option provides some logging output for the specified service, but if there might not be log output if the logging information is limited to root access
+            # in such case the <status> option needs <NRP> to show the brief log output for a service
+      $ systemctl start <service>                                    (<NRP>)
+      $ systemctl stop <service>                                     (<NRP>)
+      $ systemctl enable <service>                                   (this allows a service to start at system startup, <NRP>)
+         * only enable the things that you need
+      $ systemctl disable <service>                                  (this disallows a service from starting at system startup, <NRP>)
+   - to get the logging output for a service use <journalctl>
+      $ journalctl -u <service>                                      (the <u> flag stands for unit)
+      $ journalctl -fu <service>                                     (the <f> flag stands for follow)
+         * this commnad allows you to view in realtime the logging for a service 
+   - both <systemctl> and <journalctl> are part of <systemd>
+
+         _______________________________________________________________________________________________________________
+         _______________________________________________________________________________________________________________
+
+12) Getting Started with Arch Linux 09 - Basic Security
+   - use <netstat> to see which ports are listening to what ips
+      $ first check if netstat is installed
+         * which netstat
+      $ if it is not installed, then install it
+         * pacman -S net-tools                                    (<NRP>)
+      $ run the following command to see the ports that are active and listening to outside connection
+         * netstat -tulpn
+   - use <arch-audit> to audit your Arch system and look for vulnerabilities
+      $ first install <arch-audit> if you don't have it
+         * pacman -S arch-audit                                   (<NRP>)
+      $ run <arch-audit> commands to audit your system
+         * arch-audit
+            # this commands display the vulnerable pckages along with their vulnerability
+               % use the <CVE> number and google it to know more about the vulnerability of a package
+         * arch-audit --upgradable --quiet
+            # to see which packages have an upgrade that fixes a vulnerability
+
+         _______________________________________________________________________________________________________________
+         _______________________________________________________________________________________________________________
+
+13) Managing LVM Snapshots on Arch Linux
+   - to check the free space in your system use the following command
+      $ df -h
+   - to view the volume groups on your system use the following command (beware your system must first be cofigured with LVM to use this command)
+      $ vgs
+   - steps to update an Arch System (weekly is recommended)
+      $ take a snapshot
+      $ perform update
+      $ reboot the machine
+      $ if there is something wrong with the update and roll back to the LVM snapshot created before the update
+   - the feature of snapshot make LVM based Arch install important
+   - eventhough LVM is stable its recommened to take a backup (maybe a <diskimage>, check this out) before altering LVM volume group, you know just incase something goes wrong
+   - operations and commands on LVM (resizing)
+      $ extend the size of a volume group(VG)
+         * vgs                                           (see the size of a <VG> and free space avaiable for allocation)
+         * lvs                                           (shows the allocation of Logical volumes)
+         * lvextend -L +<size> -n /dev/mapper/<VG_name>-<LV_name>
+            # an example for the above command would be
+               % lvextend -L +20g -n /dev/mapper/volgroup0-lv_home
+            # this command extends the size of a Logical Volume(LV) by the specified size
+         * but to utilize the newly added volume by the above command an online resizing command for the file system is needed
+            # resize2fs /dev/mapper/<VG_name>-<LV_name>
+               $ an example for the above command would be
+                  ~ resize2fs /dev/mapper/volgroup0-lv_home
+      $ if you are interested check out the command to shrink the size of a VG
+         * but is not recommended to shrink a file system as it may cause damages 
+      ! Disclaimer: may be the <mapper> part in </dev/mapper/VG> is used because the tutorial used an LVM system with encryption, maybe you might want to omit the <mapper> part if you are using a normal LVM sysytem
+         * note: this is a person observation, may or maynot be right
+   - creating and managing a snapshot
+      $ lvs                                              (to list logical volumes)
+      $ lvcreate -L <size> -s -n <snapshot_name> <LV_to_snapshot_from>
+         * the above command create a snapshot for the specified Logical Volume (and yes the snapshot itself is a LV)
+         * <size> => 5GB
+         * the <s> flag means that we want to create a snapshot
+         * the <n> flag is for name, <snapshot_name> => <LV_name>_snapshot_<Date=YYYYMMDD>
+            # example for snapshot name is <root_snapshot_20190608>
+         * <LV_to_snapshot_from> is the volume we want to snapshot from, an example can be:
+            # <LV_to_snapshot_from> => /dev/mapper/volgroup0-lv_root
+         * putting all together, an example for the above command can be:
+            # lvcreate -L 5GB -s -n root_snapshot_20190608 /dev/mapper/volgroup0-lv_root
+      $ lvs                                              (once again list the avaiable LV on VG to see if the snapshot is created)
+      @ on an unrelated topic, check out <tmux> package which is a termial multiplexer
+      $ restoring the snapshot
+         * lvconvert --merge /dev/<VG_name>/<snapshot_name>
+            # the above command reverts the origin of the snapshot LV to when the snapshot was created, thus restoring to an earlier state
+            # an example for the above command would be:
+               % lvconvert --merge /dev/volgroup0.root_snapshot_20190608
+         * but after issuing the above command, the snapshot won't take effect immediately, we either habe to reboot or poweroff the PC and startup again to complete the snapshot process
+            # sometimes rebooting the system might not work, in those cases powering off and starting up might fix the problem
+      $ but if we liked the changes we have made to our Arch install and nothing breaks, then we can remove the snapshot to make the changes permanent
+         * lvremove /dev/<VG_name>/<snapshot_name>
+            # the above command removes a package, hence making our changes to the system permanent
+            # an example to the above code would be:
+               % lvremove /dev/volgroup0/root_snapshot_20190608
+         * run <lvs> command to verify the snapshot is removed
+      $ you don't want to keep your snapshot for a long time, just test the changes to your system and:
+         * if things are okay remove your snapshot and make your changes permanent
+         * but if something is broken then revert back to the snapshot of your earlier system
+         * if your data %(percent) of your snapshot gets to 100% you'll start to lose data because your using up all the unallocated space
+            # you can see the data %(percent) of a snapshot from the <lvs> commad
+            # but since we store our data in the home directory filling up space and getting to 100 % on a snapshot is very less likely and you probably don't have to worry about it
+               % but its a good practise to keep this in mind
+         * all in all don't let your snapshot hang for too long and grow out of control, atsome point you need to manage them
+            # especially don't forget that you created a snapshot if you have    
+
+      _______________________________________________________________________________________________________________
+      _______________________________________________________________________________________________________________
+
+14) Showing off my Custom Arch Linux Openbox Build
+   - bash commands
+      $ use echo to print a string to whereever you want
+         * echo <String>                                          (prints a string to the terminal)
+            # echo "Hello" (example)
+         * echo <String> >> <file_name>                           (write the specified <String> to the specified <file_name>, it doesn;t overwrite, it appends on a new line)
+            # echo "This works" >> trial.txt (example)
+   - this video shows a custom Openbox setup on Arch Linux
+   - download arch iso and make a bootable USB drive
+      $ after downloading the arch iso, connecting the USB drive, issue the following commands to make a bootable drive
+         * fdisk -l                                      (to display list of mounted disks, may <NRP>, alternatively you can use <lsblk> command)
+            # using this command figure out the drive path of your USB drive
+         * make the USB bootable with the following command
+            # dd if=<arch_iso_path> of=<USB_disk_path> bs=4M; sync            (<NRP>)
+               % <if> is for input file
+               % <of> is for output file
+               % <bs> is for block size
+               % an example for the above command is:
+                  ~ sudo dd if=downloads/arch.iso  of=/dev/sda bs=4M; sync
+   - packages to install for Arch Linux with Openbox setup (only package names listed, use pacman with <NRP> to install them)
+      $ pacman -Syyy                                        (update package sources, hence repository indexes, <NRP>)
+      $ xorg-server
+      $ xf86-video-intel                                    (video card driver for intel)
+      $ libgl
+      $ mesa
+      $ xterm                                               (terminal application)
+      $ openbox                                             (the desktop enviroment that is blank initially, I think I understood it this way)
+      $ lightdm                                             (required for login)
+         * systemctl enable lightdm                         (start lightdm at system startup, <NRP>)
+      $ lightdm-gtk-greeter                                 (lightdm won't start with out this)
+      $ network-manager-applet                              (allow to access wifi and network connections)
+         * systemctl enable NetworkManager                  (start the network manager at system startup, <NRP>)
+      $ reboot                                              (reboot the system and check out the build)
+   - furhter customize the Arch Linux Openbox build (install the following packages)
+      $ tint2                                               (this is a panel)
+         * tint2 &                                          (launch the tint2 software)
+         * consider having the panel on the left side of the screen as you have more realstate (space) left to right then what you have up to down
+      $ terminator                                          (terminal application, recommended by jay)
+         * terminator &                                     (launch terminator terminal)
+      $ PCManFM                                             (file manager)
+      $ terminous font                                      (cool font for terminal)
+      $ synapse                                             (helps to search for softwares with keyboard shortcut)
+
+
+         ---------------------------------------------------------------------------------------------------------------
+                                                On you go to the Arch Way
+         _______________________________________________________________________________________________________________
+         _______________________________________________________________________________________________________________

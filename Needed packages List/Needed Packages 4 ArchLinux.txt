@@ -1,0 +1,66 @@
+- Advanced Linux Sound Architecture (ALSA) utilities: alsa-utils
+	* pacman -S alsa-utils
+		- use the following commands to solve problems with audio
+			* Unmuting the sound card;s master volume can be done using amixer
+				- amixer sset Master unmute
+				- amixer sset Speaker unmute
+				- amixer sset Headphone unmute
+			* Unmuting the sound card can be done using alsamixer
+				- alsamixer
+- Compressing and Extracting - install zip and unzip
+	* pacman -S zip
+		- to compress file use the following format
+			* zip -r "compressed file name" "file name of file to be compressed"
+	* pacman -S unzip
+		- to extract file use the following command
+			* unzip "filename to extract"
+- Formating in ntfs format
+	* mkfs.ntfs -Q -L diskLabel /dev/sdXY
+- Installing Adobe Reader: package called acroreader
+	* first enable Multilib-Repo because the acroread package uses 32bit libs
+		- uncomment the [multilib] section in /etc/pacman.conf
+			* [multilib]
+			  Include = /etc/pacman.d/mirrorlist
+			* sudo nano /etc/pacman.conf
+		- upgrade the system
+			* sudo pacman -Syu
+	* install arcoread from aur
+		- create a folder in Programs (or anywhere you want)
+			* mkdir Adobe
+		- then go to that folder
+			* cd Adobe
+		- download the package from aur using git
+			* git clone https://aur.archlinux.org/acroread.git
+		- go to the downloaded folder
+			* cd arcoread
+		- build the package
+			* makepkg -si
+- Install android-file-transfer-linux to connect your andorid phone
+	* download the package from aur and build it
+		- git clone https://aur.archlinux.org/android-file-transfer-linux-git.git
+	* after changing your directory build the package
+		- cd android-file-transfer-linux-git
+		- makepkg -si
+
+- grub troubleshooting : enabling efivars kernel modlue
+	- boot into live installation disk of archlinix
+	- if you are in chroot exit
+	- enable evars
+		* modprobe efivars
+	- chroot in your instalation
+		* arch-chroot /mnt
+	- test if you succeeded
+		* efivar-tester
+
+
+
+
+
+
+
+
+
+
+
+
+

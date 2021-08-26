@@ -1,0 +1,69 @@
+# video = "Arch Linux 2017 Installation + Deepin Desktop + Apps + Guest Additions on Oracle VirtualBox [2017]"
+
+- pacman -Syyu
+- pacman -Sy xorg xorg-xinit
+- pacman -Sy deepin deepin-extra
+- pacman -S ttf-freefont
+- pacman -Syy lightdm lightdm-gtk-greeter
+- systemctl enable lightdm.service
+- pacman -Sy firefox qt4 vlc gimp flashplugin
+- pacman -S libreoffice filezilla gedit
+- reboot
+
+- enable bluetooth
+	* install needed packages
+		- pacman -S bluez bluez-utils
+	* systemctl enable bluetooth.service
+	* systemctl start bluetooth.service
+- correcting wireless network
+	* install networkmanager and then enable it and start it
+		- install network manager
+			* pacman -S networkmanager
+		- enable and start NetwoekManager
+			* systemctl enable NetworkManager.service
+			* systemctl start NetworkManager.service
+	* sudo nano /etc/NetworkManager/NetworkManager.conf
+	* insert the following into the above file
+		[device]
+		wifi.scan-rand-mac-address=no
+- install needed applications
+	* intellij
+	* pycharm
+	* atom
+	* vscode
+	* vlc (done)
+	* qpdfview
+	* chromium
+	* python idle (3.7) (install from aur)
+	* wps office (install from aur)
+	* wine (if needed)
+	* telegram
+	* mamp
+	* magnifier (check app for this)
+	* xdm download manager
+- installing from aur
+	* first install git
+		- pacman -S git
+	* then download the package into any directory using git clone
+		- git clone https://aur.archlinux.org/package_name.git
+	* then change directory into the package
+		- cd package
+	* view contents of provided file (optional)
+		- less PKGBUILD
+	* make the package
+		- makepkg -si
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

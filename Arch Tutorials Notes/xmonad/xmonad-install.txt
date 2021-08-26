@@ -1,0 +1,8 @@
+##########################################
+# xmonad installation tutorial (Distrotube)
+##########################################
+
+#1] install the xmonad & xmonad-contrib packages
+#2] install a terminal emulator (xterm | alacritty | ... ) & dmenu
+
+

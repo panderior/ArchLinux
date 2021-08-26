@@ -1,0 +1,77 @@
+# video = setting up elementary's Pantheon DE on Arch
+
+
+pacman -S wget
+
+wget https://aur.archlinux.org/packages/pa/package-query/package-query.tar.gz
+tar -zxvf package-query.tar.gz
+cd package-query
+makepgk -s
+pacman -U package-query-1.4-1-i685.pkg.tar.xz
+
+wget https://aur.archlinux.org/packages/ya/yaourt/yaourt.tar.gz
+tar -zxvf yaourt.tar.gz
+cd yaourt
+makepkg -s
+pacman -U yaourt-1.5-1-any.pkg.tar.xz
+
+yaourt vim-gtk (unsuccessful [duh])
+pacman -S xf86-video-intel
+pacman -S xorg-server xorg-server-utils
+
+vim /etc/pacman.conf
+""
+[pantheon]
+SigLevel = Optional
+Server = http://pkgbuild.com/~alucryd/$repo/$arch
+""
+
+sudo pacman -Syu
+
+sudo pacman -S vim cerbere-bzr gala-bzr wingpanel-bzr pantheon-session-bzr slingshot-launcher-bzr plank-bzr elementary-wallpapers-bzr gtk-theme-elementary-bzr geary indicator-pantheon-session-bzr maya-calendar-bzr midori-granite-bzr noise-bzr pantheon-backgrounds-bzr pantheon-default-settings-bzr pantheon-files-bzr pantheon-notify-bzr pantheon-print-bzr pantheon-terminal-bzr plank-theme-pantheon-bzr scratch-text-editor-bzr snap-photobooth-bzr switchboard-bzr pantheon-photos-bzr ttf-opensans ttf-dejavu ttf-droid ttf-freefont ttf-liberation
+
+yaourt ttf-raleway
+option: 1
+
+yaourt switchboard-plug
+option: 12 13 15-17 19-21 
+
+cd ~/
+
+vim .xinitrc
+"""
+#!/bin/bash
+gsettings-data-convert &
+xdg-user-dirs-gtk-update &
+/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+/usr/lib/gnome-settings-daemon/gnome-settings-daemon &
+/usr/lib/gnome-user-share/gnome-user-share &
+eval $(gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg)
+export GNOME_KEYRING_CONTROL GNOME_KEYRING_PID GPG_AGENT_INFO
+SSH_AUTH_SOCK
+exec /usr/bin/pantheon-session
+"""
+
+pacman -S xorg-xinit
+pacman -S xf86-video-vesa
+
+startx
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

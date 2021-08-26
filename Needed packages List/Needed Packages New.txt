@@ -1,0 +1,38 @@
+* wps-office - (aur)
+* codeblocks
+* xdm downloader - (aur)
+* qbittorrent client
+* xterm terminal for codeblocks
+* 7zip (aur - https://aur.archlinux.org/p7zip-gui.git)
+* eclipse jee
+* HTTrack - (for downloading a full website)
+
+* Enabling multilib
+    - To enable multilib repository, uncomment the [multilib] section in /etc/pacman.conf:
+        /etc/pacman.conf
+
+        [multilib]
+        Include = /etc/pacman.d/mirrorlist
+
+        Then upgrade the system and install the desired multilib packages. 
+
+* Displaying path
+    - echo "$PATH"
+* Adding path to root PATH
+    - PATH=$PATH:/usr/local/bin in /root/bash_profile
+    OR
+    - PATH=$PATH:/usr/local/bin (edit and change the path to your one)
+
+* Compressing and extracting a file
+    - zip -r "compressed file name.zip" "file name to be compressed"
+    - unzip "file name to extract"
+* reflector (refere documentation for usage -- used for getting uptodate mirrorlists)
+    - run the following command to Select the 200 most recently synchronized HTTP or HTTPS mirrors, sort them by download speed, and overwrite the file /etc/pacman.d/mirrorlist
+        # reflector --latest 200 --protocol http --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+* pwd (check on what direcory u are)
+* cd !# (go to previosly mentioned directory , prevously created)
+* To remove a package and its dependencies which are not required by any other installed package: 
+    pacman -Rs package_name
+* using wget to download files and mirror websites
+    - wget url -o <output file name>
+    - wget 
