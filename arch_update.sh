@@ -1,6 +1,9 @@
 #!/bin/bash
 
 # This is a script to update an Arch Linux System
+
+# Author: panderior
+# References: ArchWiki, LearnLinuxTV, DistroTube, OSTechnix  
 # Needed packages: reflector, aura, yay
 
 echo -e "\n---------------------------"
