@@ -1,17 +1,32 @@
+    ##  #####  #
+   #### ##  ## #
+  ## ## #####  #
+ ###### ## ##
+##   ## ##  ## 
+-----------------------------------------------------------------------------------------
+ Special notes packages, softwares to install and configurations to make on Arch Linux
+-----------------------------------------------------------------------------------------
+
 * to downgrade a package
     - go to 'var/cache/pacman/pkg' and find the version of the package u want to downgrade
     - pacman -U /var/cache/pacman/pkg/<package_full_name>.tar.xz 
+
 * to remove a package
     - This removes the package and its dependecies that no other package uses
         # pacman -Rs <package_name>
+
 * to check or search for a package in local system
     - pacman -Qs <package_name>
+
 * to extract to specific folder
     - unzip <file_name> -d <folder_name>
+
 * install neofetch to get info abt system
     - neofetch
+
 * to check your public ip address use the following website
     - www.ipleak.org
+
 * setting up VPN on Archlinux
     - go to <www.protonvpn.com> and setup an account
     - install <openvpn>, <dialog>,  <python-pip>,  <python-setuptools> (you will mostly have them already installed)
@@ -33,14 +48,17 @@
                 % in this case you don't have to choose anything, it'll use your last configuration and choice
         # disconnect from the vpn
             $ sudo protonvpn d
+
 * install <scrcpy> for Andriod phone screen mirroring
     - <scrcpy> is the short hand representation of <Screen Copy>
     - its found in the <AUR>
     - to run it, type <scrcpy> in the terminal
         # make sure the andriod phone is connected first
+
 * install <obs-studio> for screen recording
     - it has so many awesome features
     - don't forget to add audio and screen sources when trying to record (add is simple and straight forward)
+
 * install <genymotion> to simulate andriod device on your pc
     - this is a commercial app, but it has a free edition for personal use
     - download and install it from <AUR>
@@ -58,30 +76,36 @@
             $ sudo pacman -S linux linux-headers
             $ once again reboot vmBox
         # if none of the above steps solves the problem, then research the web for a solution regarding your specific error
+
 * to remove unused dependecies (packages) from arch system, use the following commands
     - pacman -Qdt                                   (lists unused dependecies)
     - pacman -Rsn $(pacman -Qdtq)                   (removes unused dependencies | need super user privilage)
+
 * to remove cached package install files use the following commands
     - paccache -r           (removes all cached versions of installed and uninstalled packages except for the recent 3 versions | need sudo)
     - paccache -rk1         (removed all cached versions except for the one past latest version | the last number can be manipulated as needed)
     - paccache -ruk0        (the <u> flag means to remove uninstalled packages' caches | this command removes all cached versions of uninstalled packages only)
     - pacman -Sc            (to remove all the cached packages that are not currently installed, and the unused sync database | need sudo)
     - pacman -Scc           (To remove all files from the cache | need sudo | don't use this unless you desperatly need disk space)
+
 * to remove packages in yay cache
     - yay -Sc               (to remove cached packages that are not currenly installed)
     - yay -Scc              (to remove all cached pacakegs, both official and AUR)
     - yay -Yc               (clean unneeded packages)
+
 * setup hotspot for wifi-sharing
     - check if the PC has compatible wireless device
         # iw list           (command, need to install <iw> package first)
     - install <linux-wifi-hotspot> package from AUR
     - use terminal command to initialize hotspot
         # create_ap wlan0 eth0 MyAccessPoint MyPassPhrase
+
 * extract rar files
     - install <unrar> package using pacman
     - use the following command to extract
         # unrar e <file.rar>    or
         # unrar e <file.rar> <directory-to-extract-to>
+
 * use <ncdu> package to check which files are taking disk space
     - pacman -S ncdu
     - run <ncdu> on terminal to begin the process
@@ -92,6 +116,7 @@
     - keys to use after result is displayed
         # i                     (display detail of directory, press the same key to return)
         # right_arrow, left_arrow       (display the content of a dir & go back to upper directory from content)  
+
 * how to make android device appear on window manager
     - update system ( pacman -Syu, need root privilage )
     - install git (official)
@@ -102,6 +127,7 @@
     - install gvfs-gphoto2 (official)
         # pacman -Sy gvfs-gphoto2 (NRP)
     - reboot
+
 *  to format a usb disk use the following commands
     - first check the usb device mount point
         # lsblk
@@ -113,10 +139,13 @@
     - to format the disk with ntfs use the following command
         # mkfs.ntfs <mount_point (NRP)
     - after formating a drive just unmount the usb drive before using it again
+
 * to exract rar file with its original directory structure, use the following command
 	- unrar x <file.rar> <exract_to_directory>
+
 * to list files inside a rar file without extracting it, use the following command
 	- unrar l <file.rar> 
+
 * install anaconda
  	- install anaconda pakage from AUR using yay
 	- add anaconda to path
@@ -129,16 +158,20 @@
     - to prevent anaconda from starting the <base> enviroment at terminal startup run the following command
         # conda config --set auto_activate_base false
         # the problem with starting the <base> enviroment is that it sometimes messes with the default bash commands 
+
 * install <Intel Skylake GT2 [HD Graphics 520]> GPU tool called <intel-gpu-tools>
 	- pacman -S intel-gpu-tools		(NRP)
 	- to get a top like overview of the current gpu usage, run the following command
 		# intel_gpu_top				(NRP)
+
 * check terminal emoji and unicode support with the following commands and links
     - curl https://unicode.org/Public/emoji/13.0/emoji-test.txt | less      (used to check emoji support)
         # the <less> pipelined command is used to view the output step by step instead of spilling everything at once
     - curl https://www.cl.cam.ac.uk/~mgk25/ucs/examples/UTF-8-demo.txt      (used to check unicode support)
+
 * to update the database of mlocate package, use the following command
     - updatedb                      (NRP)
+
 * how to install hp printer driver
     - install cups (offical repo)
     - enable & start cups
@@ -148,3 +181,56 @@
     - install driver plug-in
         # hp-setup -i                       (NRP)
     - install system-config-printer for GUI tool to configure printers (official repo)
+
+* how to add mason libraries to system
+    1] download and extract <mason.zip> file from official website | or clone the git repo
+        # https://cs.gmu.edu/~eclab/projects/mason/#Download        <official site>
+        # https://github.com/eclab/mason                            <official git repo>
+    2] download <mason.20.jar> jar file from official site
+    3] download and extract other libraries which allow MASON to generate movies, charts, PDF files, etc.
+        # <libraries.zip>
+    4] add extracted folder from <step-1> to the following directory path and name of <mason>
+        # /usr/share/
+    5] add the jar file from <step-2> to the following directory
+        # /usr/share/java/mason/
+            % create the mason folder
+    6] add the jars from the extracted folder from <step-3> to the following directory
+        # /usr/share/java/mason/
+    7] install Java3D to use Mason in 3D
+        a) get the required libraries for java3D and the zip files
+            % https://cs.gmu.edu/~eclab/projects/mason/j3dlibs.zip   
+        b) add the jars from the extracted zip file in <step-7a> to the following directory
+            % /usr/share/java/java3D/
+                $ create the <java3D> folder
+    8] add all the added libraries so far to the java class path
+        # edit <~/.bashrc> file and add the following lines
+            % <code-start>
+            # add mason to classpath
+            export CLASSPATH=$CLASSPATH:/usr/share/mason
+            export CLASSPATH=$CLASSPATH:/usr/share/java/mason/bsh-2.0b4.jar
+            export CLASSPATH=$CLASSPATH:/usr/share/java/mason/itext-1.2.jar
+            export CLASSPATH=$CLASSPATH:/usr/share/java/mason/jcommon-1.0.21.jar
+            export CLASSPATH=$CLASSPATH:/usr/share/java/mason/jfreechart-1.0.17.jar
+            export CLASSPATH=$CLASSPATH:/usr/share/java/mason/jmf.jar
+            export CLASSPATH=$CLASSPATH:/usr/share/java/mason/portfolio.jar
+            export CLASSPATH=$CLASSPATH:/usr/share/java/mason/mason.20.jar
+            # add java3D to classpath
+            export CLASSPATH=$CLASSPATH:/usr/share/jogamp-all-platforms
+            export CLASSPATH=$CLASSPATH:/usr/share/java/java3D/j3dcore.jar
+            export CLASSPATH=$CLASSPATH:/usr/share/java/java3D/j3dutils.jar
+            export CLASSPATH=$CLASSPATH:/usr/share/java/java3D/vecmath.jar
+            export CLASSPATH=$CLASSPATH:/usr/share/java/java3D/jogamp-fat.jar
+            % <code-end>
+    9] inorder to run mason code from Intellij IDE, you need to add the above libraries to the project library
+        # select project -> File -> Project Structure -> Libraries
+        # click on plus (add) button
+        # select Java
+        # find and select directories in step-4,5,7
+        # click on apply and ok
+
+* install a note taking tool <Notion>
+    # from AUR by the name <notion-app>
+    # create an online account first and then login and authenticate the desktop app
+
+* install netlogo for Multi-agent project
+    # from AUR by the name <netlogo>         

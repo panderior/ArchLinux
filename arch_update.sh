@@ -40,7 +40,7 @@ sudo pacman -Syyy
 # update system packages
 sudo pacman -Syu
 
-# Step 3: updating packages from aur repo
+### Step 3: updating packages from aur repo
 echo -e "\n-> updating packages from aur repo \n"
 # create packages snapshot
 sudo aura -B
