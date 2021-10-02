@@ -10,6 +10,10 @@ echo -e "\n ---------------------------------"
 echo -e " <= Push to Github repo started =>"
 echo -e " ---------------------------------\n"
 
+echo -e "\n => pull and sync local and remote repo before push"
+# pull and sync wz remote repo
+git pull origin main
+
 echo -e "\n => add file changes to staging area ... \n"
 # add changes to git staging area
 git add .
