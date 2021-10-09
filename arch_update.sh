@@ -25,7 +25,7 @@ echo -e "\n-> updating mirror list \n"
 # ~ not sure which one the system uses
 
 # update mirrorlist file using reflector
-sudo reflector --download-timeout 20 --country "KR,JP,TW,GB,US" --protocol "http,https" --latest 100 --sort rate --save /etc/pacman.d/mirrorlist
+sudo reflector --download-timeout 20 --country "KR,JP,TW,GB,US" --protocol "http,https" --latest 50 --sort rate --save /etc/pacman.d/mirrorlist
 # truncate all the contents of mirrorlist.pacnew file
 sudo truncate -s 0 /etc/pacman.d/mirrorlist.pacnew
 # replicate the content of mirrorlist file to mirrorlist.pacnew file
