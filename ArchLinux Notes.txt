@@ -233,4 +233,9 @@
     # create an online account first and then login and authenticate the desktop app
 
 * install netlogo for Multi-agent project
-    # from AUR by the name <netlogo>         
+    # from AUR by the name <netlogo>        
+* command to position multiple monitors using xrandr
+    # (cmd) xrandr --output eDP1 --auto --pos 1925x925 --output DP1 --auto --pos 0x775 --output HDMI1 --auto --pos 300x0
+    # the figures after the --pos flag are pixels from the top left corner
+    # the label of the output monitors can be retrived by simply typing the <xrandr> command on its own
+         

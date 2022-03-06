@@ -1,0 +1,89 @@
+-------------------------------------------------------
+START
+-------------------------------------------------------
+
+## Installing Budgie Desktop enviroment on Arch Linux
+## Reference: "EF - Linux Made Simple" (ermanno)
+## Required pkgs: pacman
+
+-------------------------------------------------------
+-------------------------------------------------------
+
+## Legend
+    * rhs : right hand side
+    * lhs : left hand side
+    * pkg : package
+    * cmd : command
+    * ex : example
+    * nrp : need root privilege
+
+## Notations
+    * [##] : Headers
+    * [->] : flow of action sequence
+    * [=>] : assign rhs to lhs
+    * [<>] : keyword or pkg-name or parameter to a cmd
+
+## Hierarchy of Bulletin Points
+    * [ * -> # -> - -> % -> $ -> ~ -> + ] 
+
+-------------------------------------------------------
+-------------------------------------------------------
+
+## Steps
+1] Perform an install and configure ArchLinux
+2] (Optional) To increase the font-size on the tty base arch terminal, install the following package
+    * (pkg-official) terminus-font 
+    * (cmd) setfont ter-<font_size>n
+        # (ex) setfont ter-132n
+3] Install the Graphic driver, display server, display manager, desktop env't and some additional tools
+    * Graphics Driver (choose based on Graphics card)
+        # (pkg-official) xf86-video-intel                [for intel Graphics Card]
+        # (pkg-official) xf86-video-amdgpu               [for amd Graphics Card]
+        # (pkgs-official) nvidia, nvidia-utils           [for nvidia Graphics Card]
+        # (pkg-official) xf86-video-vmware               [for virtual machine]
+    * Display Server
+        # (pkg-group-offical) xorg 
+    * Display Manager
+        # (pkg-official) lightdm 
+        # (pkg-official) lightdm-gtk-greeter             [lightdm needs a greeter after system start] 
+    * Desktop Enviroment
+        # (pkg-offical) budgie-desktop
+        # (pkg-group-official) gnome                     [to provide additional applications for a more complete DE experiance]
+        # (pkg-official) gnome-control-center            [used to make changes to the system settings] 
+4] Configure basic settings before reboot
+    * Enable lightdm
+        # (cmd-nrp) systemctl enable lightdm
+5] Reboot the system and make sure Budgie DE is selected on the greeter, and login
+6] Further configure the Budgie install
+    * open terminal
+    * install themes and icons
+        # (pkg-official) materia-gtk-theme             [this is a theme package]
+        # (pkg-official) papirus-icon-theme             [this is an icon package]
+        # (pkg-official) i3lock                         [a lock screen because budgie doesn't come with one]
+    * configure the look and feel of Budgie DE
+        # Budgie menu -> System Tools -> Budgie Desktop Settings
+            - under Styles
+                % Widgets => Material-dark
+                % Icons => Papirus-dark
+                % (personal-pereference) Cursors => bloom   [install it if its not available] 
+            - (personal-preference) under Top Panel
+                % go to settings and align it to left and <Dock mode>
+7] Install additional pkgs
+    * audio pkgs
+        # (pkg-official) pulseaudio
+        # (pkg-official) alsa-utils
+8] Handle lock screen issue
+    * possible to install <gnome-screensaver> which will kickin after certain amount of time
+    * but to manually lock the screen, <i3lock> is a decent pkg
+    * add shortcut for <i3lock> cmd
+        # right click on the desktop -> system settings -> search (keyboard) -> keyboard shortcuts  [actual step may vary a little bit]
+        # go down to the bottom and click the plus sign
+        # small window will pop up, then fill out the required fields            
+            - Name => Lock Screen                   [name it as you wish]
+            - Command => i3lock -i <path-to-img>    [adding an image is optional, in such case the screen becomes full white]  
+            - click on set shortcut and assign hotkey (<Ctrl + L> is recommended) 
+
+-------------------------------------------------------
+END
+-------------------------------------------------------
+
