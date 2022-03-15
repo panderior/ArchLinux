@@ -1,0 +1,34 @@
+[START]
+
+# Configure Open in Terminal (Right click) menu on Nautilus
+
+Date: March 15, 2022
+Author: Panderior
+Reference: couple of web sites
+    * https://bbs.archlinux.org/viewtopic.php?id=254020                         
+    * https://www.addictivetips.com/ubuntu-linux-tips/open-terminal-nautilus/   (based on this article)
+
+# Problem
+After installing Budgie Desktop Enviroment on ArchLinux the default File Manager terminal (on right click menu) becomes gnome-terminal. And there is no built-in method to attach another termial to the File Manager (nautilus) right click menu.
+
+# Solution
+Install the following packages and add a new entry to the Right-Click for opening terminal on current folder.
+    * (pkg-aur) nautilus-open-any-terminal
+    * (pkg-official) dconf-editor
+
+# Limitation
+This work around seems to apply only for Nautilus File Manager.
+
+# Steps
+    * install <nautilus-open-any-terminal> package from the AUR
+    * install <dconf-editor> package from Official Arch repo
+    * open <dconf-editor> application
+    * go to the following folders (menus) in order
+        $ com -> github -> Stunkymonkey -> nautilus-open-any-terminal
+    * click on terminal menu (option)
+    * turn off "Use default value" toggle button
+    * in the "Custom value" text box, type in the terminal name (used to start the terminal on a terminal :) )
+    * click on "Apply" or "tick (/)" button that you see next to a confirmation message located at the bottom of the screen
+    * reboot the system and the "Open <Your-Terminal> Here" entry on the Right-Click menu should appear
+
+[END]
