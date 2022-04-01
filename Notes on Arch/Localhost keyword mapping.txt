@@ -1,0 +1,41 @@
+[START]
+
+# Map <localhost> keyword to 127.0.0.1 ip (local) in etc directory
+
+---------
+Date: April 1, 2022
+Author: Panderior
+Reference: a question on stack overflow (yeah actually the question itself 
+           provided the answer :)
+    * https://unix.stackexchange.com/questions/422062/why-does-localhost-not-resolve-to-127-0-0-1-on-a-given-port
+
+---------
+# Problem
+---------
+After running a Spring boot application on Apache Server, the <localhost> 
+keyword did not work when using HTTPie (a command line HTTP client) to test api
+calls, the local ip <127.0.0.1> works, but localhost doesn't.
+
+---------
+# Solution
+---------
+Correct the mapping of the <127.0.0.1> ip and set one of its allias to be 
+<localhost>.
+
+---------
+# Limitation
+---------
+This is the simplest problem that could occur related to the localhost errors.
+And the solution could already be properly configured on most cases.
+
+---------
+# Steps
+---------
+    * go to the <etc/> directory and open the file <hosts> for editing
+    * on the entry (line) of the file that mentions <127.0.0.1>, add the keyword <localhost> as one of the alliases
+        $ if that entry doesn't exist, then create it and map it to the keyword
+    * save the file
+
+[END] 
+
+
