@@ -1,0 +1,49 @@
+[START]
+
+# Mount OneDrive cloud storage on local PC using rclone
+
+---------
+Date: April 7, 2022
+Author: Panderior
+Reference: 
+    * https://www.youtube.com/watch?v=9u0LibdiF88       (mainly based on this video) 
+
+---------
+# Problem
+---------
+There is no native way to integrate OneDrive cloud storage into Arch Linux local system. There is a community built solution which was did not have clear steps on how to use it (in my view).
+
+---------
+# Solution
+---------
+Use a general remote connection manager called rclone, to estabilish and sync remote connection to the OneDrive cloud storage.
+
+---------
+# Limitation
+---------
+There is one command that needs to be run inorder to mount the OneDrive remote storage to the File Explorer. That command can be set to run at startup. So far using methods for Arch Linux startup procedures and Budgie Desktop Enviroment startup procedures did not succeed in running that command. So the command to mount OneDrive will have to be done manually after PC start (in my case).
+
+---------
+# Steps
+---------
+    * install <rclone> pkg from offical Arch repo (NRP)
+    * configure rclone to your OneDrive account
+        - run [cmd: <rclone config>]
+        - select <New remote> option
+        - give a name for the remote connection
+        - from the given list of Service providers find the number of Microsoft OneDrive and insert that into Storage text input
+        - leave <client_id> and <client_secret> blank
+        - Choose regoin for OneDrive (leave it at default which is global)
+        - select No for Edit advanced config
+        - select Yes for use auto config
+        - Then it will direct you to a Mcrosoft Accont login page (for which you have to login and accept any permissions requested by rclone)
+        - then select type of connection to "OneDrive Personal or Business"
+        - then it will display your available OneDrive drives and request some confirmations, for which you will agree
+        - then it will give you an access token, which I recommend you save (also agree to the confirmation step at this stage)
+        - create a directory (preferably in home) where the OneDrive will be mounted (prefereably named to onedrive)
+        - finally you can quit the configuration step
+    * run the following command to mount OneDrive (the path and name of remote connection depend on you config steps)
+        - [cmd: <rclone --vfs-cache-mode writes mount onedrive: ~/onedrive/ --daemon>]
+
+
+[END]
