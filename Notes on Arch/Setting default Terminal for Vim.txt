@@ -1,0 +1,40 @@
+[START]
+
+# Set default terminal for Vim
+
+---------
+Date: April 22, 2022
+Author: Panderior
+Reference: 
+    * https://unix.stackexchange.com/questions/422062/why-does-localhost-not-resolve-to-127-0-0-1-on-a-given-port 
+
+---------
+# Problem
+---------
+Eventhough the default terminal for Arch Linux and the Budgie DE I am using is
+set to Alacritty (by various means), Vim is still opening with xterm termial.
+The problem is how to force Vim to open with the terminal of choice.
+
+---------
+# Solution
+---------
+Edit the </usr/share/applications/vim.desktop> file and change the appropriate
+lines.
+
+---------
+# Limitation
+---------
+This solution may not be required if the problem doesn't exist. And this fix 
+may not be a general solution for the problem mentioned.
+
+---------
+# Steps
+---------
+    * edit </usr/share/applications/vim.desktop> and change the <Exec> and 
+      <Terminal> as following: (NRP)
+        # Exec=alacritty -e vim %F
+        # Terminal=false
+
+
+[END] 
+
