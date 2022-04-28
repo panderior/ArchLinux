@@ -34,6 +34,7 @@ And the solution could already be properly configured on most cases.
     * go to the <etc/> directory and open the file <hosts> for editing
     * on the entry (line) of the file that mentions <127.0.0.1>, add the keyword <localhost> as one of the alliases
         $ if that entry doesn't exist, then create it and map it to the keyword
+        $ <eg> 127.0.0.1 localhost 
     * save the file
 
 [END] 
