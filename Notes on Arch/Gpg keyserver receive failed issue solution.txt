@@ -1,0 +1,38 @@
+[START]
+
+# Solution for the issue of gpg keyserver recieve failed issue
+
+---------
+Date: January 9, 2023
+Author: Panderior
+Reference: 
+    * https://www.reddit.com/r/EndeavourOS/comments/wvtw5b/gpg_keyserver_receive_failed_server_indicated_a/ 
+
+---------
+# Problem
+---------
+Updating some pkgs become impossible when the gpg key can't be downloaded by
+pacman or yay through the normal process. The pkg update terminates with an error
+like "gpg: keyserver receive failed" or "keyserver not responding".
+
+---------
+# Solution
+---------
+Download the keys using <gpg> pkg itself and after confirming the download and import
+of the keys, continue the installation or update of the pkg.
+
+---------
+# Limitation
+---------
+If the manual download of the keys with the <gpg> pkg failes, then another solution
+needs to be researched.
+
+---------
+# Steps
+---------
+* download the required keys manualy on the cmd using <gpg> pkg
+    # gpg --recv-key --keyserver keyserver.ubuntu.com <KeyId>
+* after confirming the install and import of the key, continue the installation or update of pkgs
+
+[END] 
+
